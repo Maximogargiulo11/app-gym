@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "./database.types";
-import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL } from "./env";
+import { supabaseEnv } from "./env";
 
 // Rutas accesibles sin sesión.
 const PUBLIC_PATHS = ["/login", "/registro", "/auth", "/terminos", "/privacidad", "/offline"];
@@ -9,7 +9,7 @@ const PUBLIC_PATHS = ["/login", "/registro", "/auth", "/terminos", "/privacidad"
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
 
-  const supabase = createServerClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+  const supabase = createServerClient<Database>(supabaseEnv().url, supabaseEnv().key, {
     cookies: {
       getAll() {
         return request.cookies.getAll();
