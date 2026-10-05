@@ -20,6 +20,7 @@ Red social de entrenamiento por gimnasio y sede (piloto: Manantial Chacabuco, C�
 - El secreto del QR vive en `branch_secrets` (RLS sin políticas). El token del QR es un HMAC de `slug:qr_version` y se valida en Postgres (fase 4).
 - `anon` no tiene acceso a ninguna tabla.
 - Las funciones `security definer` llevan `set search_path = ''` y nombres calificados con el esquema.
+- Los datos de catálogo que también van a producción (gimnasio, sedes, ejercicios globales) van en **migraciones**. `seed.sql` es solo para desarrollo: usuarios y entrenamientos de prueba, y secretos de QR fijos.
 - Después de cambiar el esquema: `npm run db:types`.
 
 ## Frontend
@@ -27,7 +28,8 @@ Red social de entrenamiento por gimnasio y sede (piloto: Manantial Chacabuco, C�
 - Next.js 16: `middleware.ts` ahora es **`proxy.ts`**. `params` y `searchParams` son Promises. Hay tipos globales `PageProps<"/ruta">` y `LayoutProps` (`next typegen`). Ante la duda, leer `node_modules/next/dist/docs/`.
 - Supabase con `@supabase/ssr`: `lib/supabase/server.ts` expone `createClient`, `getUser` y `getMyProfile`, cacheados por request. `lib/supabase/admin.ts` usa la secret key y es **solo servidor**: hoy se usa únicamente para borrar la cuenta.
 - El layout `(app)` exige sesión y onboarding completo.
-- Variables de entorno: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY` y `NEXT_PUBLIC_SITE_URL`.
+- Variables de entorno: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (o `NEXT_PUBLIC_SUPABASE_ANON_KEY`), `SUPABASE_SECRET_KEY` (o `SUPABASE_SERVICE_ROLE_KEY`) y `NEXT_PUBLIC_SITE_URL`. Se leen al crear el cliente, no al importar el módulo, para que el build no dependa de ellas.
+- Deploy: Vercel (plan Hobby) solo publica commits del dueño de la cuenta. Lo de Claude se publica al mergear el PR a `main`. La integración de Supabase con GitHub aplica las migraciones al mergear a `main`.
 - Tokens de diseño en `app/globals.css` (`@theme` de Tailwind 4):
   - Colores: `bg-bg`, `bg-surface`, `bg-surface-2`, `text-muted`, `text-soft`, `bg-accent` / `text-on-accent`, `bg-accent-bg` + `border-accent-border`, `bg-pr-bg` / `text-pr`.
   - Radios: `rounded-card` (18 px), `rounded-btn` (12 px), `rounded-pill` (22 px).

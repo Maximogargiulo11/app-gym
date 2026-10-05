@@ -62,6 +62,7 @@ Hay más usuarios en `supabase/seed.sql`, con unos 200 entrenamientos de las úl
   - `…0100_schema.sql`: tablas.
   - `…0200_functions.sql`: reglas de privacidad, triggers y vista `profiles_public`.
   - `…0300_rls.sql`: políticas y permisos por columna.
+  - `…20261005000100_catalog.sql`: gimnasio Manantial, sus 3 sedes y los 65 ejercicios. Es catálogo real, así que también se aplica en producción.
 - Seed de desarrollo: `supabase/seed.sql`.
 
 ```bash
@@ -97,15 +98,20 @@ npm run test:rls
    npx supabase link --project-ref <ref>
    npx supabase db push
    ```
-   **No corras `seed.sql` en producción**: tiene usuarios y secretos de QR de prueba. Para producción hay que cargar el gimnasio y las sedes a mano. El `qr_secret` se genera solo.
+   Si conectaste el repo desde Supabase (Project Settings → Integrations → GitHub) con "Deploy to production" activado, las migraciones se aplican solas cada vez que se mergea a `main`.
+
+   **No corras `seed.sql` en producción**: tiene usuarios y secretos de QR de prueba. El gimnasio, las sedes y los ejercicios ya vienen en las migraciones, y cada sede genera su `qr_secret` al azar.
 3. En Authentication → URL Configuration:
    - Site URL: `https://<tu-app>.vercel.app`.
    - Redirect URLs: `https://<tu-app>.vercel.app/auth/callback`.
 4. En Vercel, importá el repo y cargá las variables de entorno:
    - `NEXT_PUBLIC_SUPABASE_URL`.
-   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`.
-   - `SUPABASE_SECRET_KEY`: solo servidor, nunca con prefijo `NEXT_PUBLIC_`.
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (o `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
+   - `SUPABASE_SECRET_KEY` (o `SUPABASE_SERVICE_ROLE_KEY`): solo servidor, nunca con prefijo `NEXT_PUBLIC_`.
+
+   La integración Supabase ↔ Vercel carga estas variables sola. La app acepta los dos nombres de cada clave.
    - `NEXT_PUBLIC_SITE_URL`.
+5. Vercel en plan Hobby solo despliega commits del dueño de la cuenta. Los commits de Claude se publican al mergear el Pull Request a `main` desde GitHub.
 
 ## Estructura
 
