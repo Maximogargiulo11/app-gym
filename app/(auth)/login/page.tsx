@@ -9,6 +9,8 @@ export const metadata: Metadata = { title: "Iniciar sesión" };
 const ERRORS: Record<string, string> = {
   google: "No pudimos conectar con Google. Probá de nuevo.",
   callback: "El link venció o ya se usó. Iniciá sesión de nuevo.",
+  // Hay sesión pero no hay fila en profiles: la base no tiene las migraciones aplicadas.
+  perfil: "Iniciaste sesión, pero no encontramos tu perfil. La base de datos todavía no está lista.",
 };
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
