@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation";
 import { BottomNav } from "@/components/ui";
-import { getMyProfile } from "@/lib/supabase/server";
+import { getMyProfile, getUser } from "@/lib/supabase/server";
 
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   const profile = await getMyProfile();
-  if (!profile) redirect("/login");
+  if (!profile) redirect((await getUser()) ? "/login?error=perfil" : "/login");
   if (!profile.onboarded_at) redirect("/onboarding");
 
   return (

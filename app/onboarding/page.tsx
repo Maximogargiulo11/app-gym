@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { createClient, getMyProfile } from "@/lib/supabase/server";
+import { createClient, getMyProfile, getUser } from "@/lib/supabase/server";
 import { OnboardingFlow } from "./onboarding-flow";
 
 export const metadata: Metadata = { title: "Armá tu perfil" };
 
 export default async function OnboardingPage() {
   const profile = await getMyProfile();
-  if (!profile) redirect("/login?next=/onboarding");
+  if (!profile) redirect((await getUser()) ? "/login?error=perfil" : "/login?next=/onboarding");
   if (profile.onboarded_at) redirect("/feed");
 
   const supabase = await createClient();
