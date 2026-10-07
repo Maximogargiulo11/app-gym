@@ -29,7 +29,6 @@ Red social de entrenamiento por gimnasio y sede (piloto: Manantial Chacabuco, C�
 - Supabase con `@supabase/ssr`: `lib/supabase/server.ts` expone `createClient`, `getUser` y `getMyProfile`, cacheados por request. `lib/supabase/admin.ts` usa la secret key y es **solo servidor**: hoy se usa únicamente para borrar la cuenta.
 - El layout `(app)` exige sesión y onboarding completo.
 - Variables de entorno: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (o `NEXT_PUBLIC_SUPABASE_ANON_KEY`), `SUPABASE_SECRET_KEY` (o `SUPABASE_SERVICE_ROLE_KEY`) y `NEXT_PUBLIC_SITE_URL`. Se leen al crear el cliente, no al importar el módulo, para que el build no dependa de ellas.
-- Deploy: Vercel (plan Hobby) solo publica commits del dueño de la cuenta. Lo de Claude se publica al mergear el PR a `main`. La integración de Supabase con GitHub aplica las migraciones al mergear a `main`.
 - Tokens de diseño en `app/globals.css` (`@theme` de Tailwind 4):
   - Colores: `bg-bg`, `bg-surface`, `bg-surface-2`, `text-muted`, `text-soft`, `bg-accent` / `text-on-accent`, `bg-accent-bg` + `border-accent-border`, `bg-pr-bg` / `text-pr`.
   - Radios: `rounded-card` (18 px), `rounded-btn` (12 px), `rounded-pill` (22 px).
@@ -39,6 +38,24 @@ Red social de entrenamiento por gimnasio y sede (piloto: Manantial Chacabuco, C�
 - Componentes reutilizables en `components/ui/`. Usar `<button>` y `<a>` reales, `aria-label` en botones de ícono y labels en inputs.
 - Cada pantalla tiene estados de carga, vacío y error (`loading.tsx`, `error.tsx`, `EmptyState`, `ErrorState`).
 - Formularios con `action={...}`: usar inputs **controlados**, porque React resetea el formulario después de enviar.
+
+## Flujo de trabajo y deploy (acordado con el dueño)
+
+Claude construye en GitHub y el deploy es automático. El dueño **no** tiene que copiar SQL ni tocar Vercel ni Supabase a mano.
+
+1. Trabajar en la rama de la sesión, creada desde `main` actualizado.
+2. Antes de subir, validar en local: `npm run lint`, `npm run typecheck`, `npm run build`, y si se tocó la base, `npm run db:reset` y `npm run test:rls`.
+3. Push, abrir un PR a `main` y **mergearlo** (el dueño lo autorizó). El commit de merge queda a nombre del dueño, que es lo que necesita Vercel Hobby.
+4. Al mergear a `main`:
+   - **Vercel** despliega a producción: https://app-gym-three-ebon.vercel.app
+   - La **integración Supabase ↔ GitHub** (check "Supabase Preview") aplica las migraciones nuevas en el proyecto `ahkjpvbnejaqolrdgcce`.
+5. Verificar que el status "Vercel" y el check "Supabase Preview" terminen en success sobre el commit de `main`. Después avisarle al dueño qué probar.
+
+Reglas:
+- Todo cambio de base va como **migración nueva** en `supabase/migrations/`. Nunca SQL a mano en el dashboard.
+- Nunca pedirle al dueño que pegue SQL, salvo que la integración falle.
+- Los commits de Claude en ramas no se despliegan solos (Vercel Hobby los rechaza). Lo que se publica es lo que llega a `main`.
+- `supabase/setup-produccion.sql` es solo un respaldo para crear la base a mano en un proyecto vacío; las migraciones son la fuente de verdad.
 
 ## Comandos
 
