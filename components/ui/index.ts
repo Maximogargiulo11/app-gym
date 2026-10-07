@@ -7,4 +7,5 @@ export { Pill, PillLink } from "./pill";
 export { RadioCard } from "./radio-card";
 export { EmptyState, ErrorState, FormMessage, Skeleton, Spinner } from "./states";
 export { TextField } from "./text-field";
+export { Sheet } from "./sheet";
 export { Toggle } from "./toggle";

@@ -39,6 +39,13 @@ Red social de entrenamiento por gimnasio y sede (piloto: Manantial Chacabuco, C�
 - Cada pantalla tiene estados de carga, vacío y error (`loading.tsx`, `error.tsx`, `EmptyState`, `ErrorState`).
 - Formularios con `action={...}`: usar inputs **controlados**, porque React resetea el formulario después de enviar.
 
+## Entrenamientos (fase 2)
+
+- El entrenamiento en curso vive en `lib/workout/use-active-workout.ts`: se guarda al instante en `localStorage` y se sincroniza con la RPC `sync_workout`, que reemplaza ejercicios y series y es atómica. La copia del dispositivo gana al recargar.
+- `finish_workout` descarta las series sin marcar, calcula totales y detecta los récords (mejor peso o 1RM de Epley) en el servidor. La primera vez que se hace un ejercicio no cuenta como récord.
+- `previous_sets` alimenta la columna "Anterior". `save_routine` crea o reemplaza rutinas.
+- Hay un solo entrenamiento en curso por persona (índice único parcial).
+
 ## Flujo de trabajo y deploy (acordado con el dueño)
 
 Claude construye en GitHub y el deploy es automático. El dueño **no** tiene que copiar SQL ni tocar Vercel ni Supabase a mano.
