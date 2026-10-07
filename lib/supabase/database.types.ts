@@ -9,10 +9,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      graphql: {
-        Args: { extensions?: Json; operationName?: string; query?: string; variables?: Json };
-        Returns: Json;
-      };
+      graphql: { Args: { extensions?: Json; operationName?: string; query?: string; variables?: Json }; Returns: Json };
     };
     Enums: {
       [_ in never]: never;
@@ -1101,6 +1098,7 @@ export type Database = {
       can_view_content: { Args: { owner: string }; Returns: boolean };
       can_view_workout: { Args: { wid: string }; Returns: boolean };
       f_unaccent: { Args: { "": string }; Returns: string };
+      finish_workout: { Args: { p_publish: boolean; p_workout_id: string }; Returns: Json };
       gym_of_branch: { Args: { bid: string }; Returns: string };
       gym_today: { Args: Record<PropertyKey, never>; Returns: string };
       is_accepted_follower: { Args: { owner: string; viewer: string }; Returns: boolean };
@@ -1109,6 +1107,15 @@ export type Database = {
       my_gym_id: { Args: Record<PropertyKey, never>; Returns: string };
       owns_routine: { Args: { rid: string }; Returns: boolean };
       owns_workout: { Args: { wid: string }; Returns: boolean };
+      previous_sets: {
+        Args: { p_exercise_ids: string[] };
+        Returns: {
+          exercise_id: string;
+          reps: number;
+          set_number: number;
+          weight_kg: number;
+        }[];
+      };
       profile_stats: {
         Args: { uid: string };
         Returns: {
@@ -1117,6 +1124,8 @@ export type Database = {
           workouts: number;
         }[];
       };
+      save_routine: { Args: { p_items: Json; p_name: string; p_routine_id: string }; Returns: string };
+      sync_workout: { Args: { p_exercises: Json; p_title: string; p_workout_id: string }; Returns: undefined };
       username_available: { Args: { name: string }; Returns: boolean };
       workout_of_exercise: { Args: { weid: string }; Returns: string };
     };
