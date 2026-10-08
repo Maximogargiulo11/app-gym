@@ -1,4 +1,4 @@
-import { Ban, ChevronRight, Globe, Lock, LogOut, MapPin, Pencil, Shield, Sun, UserCheck } from "lucide-react";
+import { Ban, ChevronRight, Globe, Lock, LogOut, MapPin, Pencil, QrCode, Shield, Sun, UserCheck } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Counters, RecentWorkouts, Records, type RecordRow } from "@/components/profile/profile-sections";
@@ -33,34 +33,41 @@ export default async function PerfilPage() {
   const supabase = await createClient();
   const week = currentWeek();
 
-  const [{ data: stats }, { data: records }, { data: workouts }, { data: weekWorkouts }, { count: pending }] =
-    await Promise.all([
-      supabase.rpc("profile_stats", { uid: profile.id }).maybeSingle(),
-      supabase
-        .from("personal_records")
-        .select("exercise_id, best_weight, best_weight_reps, exercise:exercises(name)")
-        .eq("user_id", profile.id)
-        .order("best_e1rm", { ascending: false })
-        .limit(4),
-      supabase
-        .from("workouts")
-        .select("id, title, started_at, ended_at, total_volume")
-        .eq("user_id", profile.id)
-        .eq("status", "finished")
-        .order("started_at", { ascending: false })
-        .limit(5),
-      supabase
-        .from("workouts")
-        .select("started_at")
-        .eq("user_id", profile.id)
-        .eq("status", "finished")
-        .gte("started_at", new Date(`${week[0]}T00:00:00-03:00`).toISOString()),
-      supabase
-        .from("follows")
-        .select("follower_id", { count: "exact", head: true })
-        .eq("following_id", profile.id)
-        .eq("status", "pending"),
-    ]);
+  const [
+    { data: stats },
+    { data: records },
+    { data: workouts },
+    { data: weekWorkouts },
+    { count: pending },
+    { count: staff },
+  ] = await Promise.all([
+    supabase.rpc("profile_stats", { uid: profile.id }).maybeSingle(),
+    supabase
+      .from("personal_records")
+      .select("exercise_id, best_weight, best_weight_reps, exercise:exercises(name)")
+      .eq("user_id", profile.id)
+      .order("best_e1rm", { ascending: false })
+      .limit(4),
+    supabase
+      .from("workouts")
+      .select("id, title, started_at, ended_at, total_volume")
+      .eq("user_id", profile.id)
+      .eq("status", "finished")
+      .order("started_at", { ascending: false })
+      .limit(5),
+    supabase
+      .from("workouts")
+      .select("started_at")
+      .eq("user_id", profile.id)
+      .eq("status", "finished")
+      .gte("started_at", new Date(`${week[0]}T00:00:00-03:00`).toISOString()),
+    supabase
+      .from("follows")
+      .select("follower_id", { count: "exact", head: true })
+      .eq("following_id", profile.id)
+      .eq("status", "pending"),
+    supabase.from("gym_staff").select("gym_id", { count: "exact", head: true }).eq("user_id", profile.id),
+  ]);
 
   const trainedDays = new Set((weekWorkouts ?? []).map((w) => localDate(new Date(w.started_at))));
   const today = localDate(new Date());
@@ -143,6 +150,7 @@ export default async function PerfilPage() {
           { href: "/perfil/solicitudes", label: "Solicitudes de seguimiento", icon: UserCheck, badge: pending ?? 0 },
           { href: "/perfil/privacidad", label: "Privacidad", icon: Shield },
           { href: "/perfil/bloqueados", label: "Bloqueados", icon: Ban },
+          ...(staff ? [{ href: "/admin/sedes", label: "Admin de sedes", icon: QrCode }] : []),
         ].map((item) => (
           <Link
             key={item.href}

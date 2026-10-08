@@ -54,6 +54,16 @@ Red social de entrenamiento por gimnasio y sede (piloto: Manantial Chacabuco, C�
 - Fotos de perfil en el bucket público `avatars/<user_id>/...`: cada persona solo escribe en su carpeta.
 - "Busco compañero" lo ve todo el gimnasio, aunque la cuenta sea privada (es una publicación voluntaria).
 
+## Sede (fase 4)
+
+- Check-in: el QR abre `/checkin?b=&t=`; el cliente llama a la server action `checkIn`, que usa la RPC `perform_checkin` (valida el HMAC, exige sede del propio gimnasio, uno por día y sede). Nunca registrar check-ins en el render de un GET.
+- `my_streak()`: días seguidos con check-in que terminan hoy o ayer. Solo la propia.
+- Rankings: `ranking_exercises` y `branch_monthly_ranking` (top 10 + tu fila) salen de `ranking_entries` (interna, sin grant). Solo entran quienes tienen `show_in_rankings` y `show_branch`, sin bloqueo, de tu mismo gimnasio. Cuenta la serie más pesada del mes (hora de Córdoba).
+- Desafíos: métrica `checkin_days`. `challenge_progress` devuelve solo totales por sede y `my_days`. Se crean y borran con `create_challenge` / `delete_challenge` (solo staff).
+- Admin: `/admin/sedes` (staff vía `gym_staff`). `branch_qr_token` y `rotate_branch_qr` son solo staff. Rotar sube `qr_version` e invalida los QR impresos.
+- Alta de staff en producción: `claim_gym_admin(code)` contra `gym_admin_invites` (se guarda solo el SHA-256 del código, un solo uso). Nunca poner emails ni códigos en texto plano en el repo.
+- El escáner usa `@zxing/browser` (import dinámico) y abre la cámara solo al tocar el botón. El QR se genera con `qrcode` en el servidor (`lib/sede/qr.ts`).
+
 ## Flujo de trabajo y deploy (acordado con el dueño)
 
 Claude construye en GitHub y el deploy es automático. El dueño **no** tiene que copiar SQL ni tocar Vercel ni Supabase a mano.

@@ -383,6 +383,38 @@ export type Database = {
           },
         ];
       };
+      gym_admin_invites: {
+        Row: {
+          code_hash: string;
+          created_at: string;
+          gym_id: string;
+          used_at: string | null;
+          used_by: string | null;
+        };
+        Insert: {
+          code_hash: string;
+          created_at?: string;
+          gym_id: string;
+          used_at?: string | null;
+          used_by?: string | null;
+        };
+        Update: {
+          code_hash?: string;
+          created_at?: string;
+          gym_id?: string;
+          used_at?: string | null;
+          used_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "gym_admin_invites_gym_id_fkey";
+            columns: ["gym_id"];
+            isOneToOne: false;
+            referencedRelation: "gyms";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       gym_staff: {
         Row: {
           created_at: string;
@@ -1095,9 +1127,44 @@ export type Database = {
     Functions: {
       branch_checkins_today: { Args: { bid: string }; Returns: number };
       branch_member_count: { Args: { bid: string }; Returns: number };
+      branch_monthly_ranking: {
+        Args: { p_branch: string; p_exercise: string; p_month?: string };
+        Returns: {
+          avatar_url: string;
+          full_name: string;
+          is_me: boolean;
+          rank: number;
+          reps: number;
+          user_id: string;
+          username: string;
+          weight_kg: number;
+        }[];
+      };
+      branch_qr_token: { Args: { p_branch_id: string }; Returns: string };
       can_view_content: { Args: { owner: string }; Returns: boolean };
       can_view_workout: { Args: { wid: string }; Returns: boolean };
+      challenge_progress: {
+        Args: { p_challenge: string };
+        Returns: {
+          branch_id: string;
+          branch_name: string;
+          days: number;
+          my_days: number;
+        }[];
+      };
+      claim_gym_admin: { Args: { p_code: string }; Returns: boolean };
       copy_workout_as_routine: { Args: { p_workout_id: string }; Returns: string };
+      create_challenge: {
+        Args: {
+          p_branch_ids: string[];
+          p_description: string;
+          p_ends_on: string;
+          p_starts_on: string;
+          p_title: string;
+        };
+        Returns: string;
+      };
+      delete_challenge: { Args: { p_challenge: string }; Returns: undefined };
       f_unaccent: { Args: { "": string }; Returns: string };
       feed_partner_posts: {
         Args: { p_before?: string; p_limit?: number; p_scope: string };
@@ -1156,8 +1223,10 @@ export type Database = {
         }[];
       };
       my_gym_id: { Args: Record<PropertyKey, never>; Returns: string };
+      my_streak: { Args: Record<PropertyKey, never>; Returns: number };
       owns_routine: { Args: { rid: string }; Returns: boolean };
       owns_workout: { Args: { wid: string }; Returns: boolean };
+      perform_checkin: { Args: { p_slug: string; p_token: string }; Returns: Json };
       previous_sets: {
         Args: { p_exercise_ids: string[] };
         Returns: {
@@ -1175,6 +1244,26 @@ export type Database = {
           workouts: number;
         }[];
       };
+      qr_token_for: { Args: { p_branch_id: string }; Returns: string };
+      ranking_entries: {
+        Args: { p_branch: string; p_month: string };
+        Returns: {
+          done_at: string;
+          exercise_id: string;
+          reps: number;
+          user_id: string;
+          weight_kg: number;
+        }[];
+      };
+      ranking_exercises: {
+        Args: { p_branch: string; p_month?: string };
+        Returns: {
+          exercise_id: string;
+          name: string;
+          participants: number;
+        }[];
+      };
+      rotate_branch_qr: { Args: { p_branch_id: string }; Returns: number };
       save_routine: { Args: { p_items: Json; p_name: string; p_routine_id: string }; Returns: string };
       sync_workout: { Args: { p_exercises: Json; p_title: string; p_workout_id: string }; Returns: undefined };
       username_available: { Args: { name: string }; Returns: boolean };

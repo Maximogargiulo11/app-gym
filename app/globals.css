@@ -61,3 +61,15 @@ body {
 .pt-safe {
   padding-top: env(safe-area-inset-top);
 }
+
+/* Impresión del QR de recepción: hoja blanca, sin la barra inferior. */
+@media print {
+  @page {
+    margin: 12mm;
+  }
+  html,
+  body {
+    background: #fff;
+    color: #0f1110;
+  }
+}
