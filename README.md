@@ -10,7 +10,7 @@ Red social de entrenamiento por gimnasio y sede: registro de entrenamientos esti
 | --- | --- | --- |
 | 1 · Base | Tokens de diseño, fuentes, Supabase, migraciones, RLS, seed, auth (email + Google), onboarding y barra inferior | ✅ |
 | 2 · Entrenar | Biblioteca, entrenamiento en curso, descanso, PR, rutinas | ✅ |
-| 3 · Social | Feed, likes, comentarios, perfiles, follows, bloqueo, reportes, "busco compañero" | — |
+| 3 · Social | Feed, likes, comentarios, perfiles, follows, bloqueo, reportes, "busco compañero" | ✅ |
 | 4 · Sede | Check-in QR, racha, rankings, desafíos y admin de QR | — |
 | 5 · PWA y deploy | Service worker, íconos, offline, legales, eliminar cuenta | — |
 
