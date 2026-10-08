@@ -46,6 +46,14 @@ Red social de entrenamiento por gimnasio y sede (piloto: Manantial Chacabuco, C�
 - `previous_sets` alimenta la columna "Anterior". `save_routine` crea o reemplaza rutinas.
 - Hay un solo entrenamiento en curso por persona (índice único parcial).
 
+## Social (fase 3)
+
+- El feed se lee con las RPC `feed_workouts(tab, before, limit)` y `feed_partner_posts(scope, ...)`. Son `security invoker`, así que RLS decide qué se ve. En la pestaña "sede" solo aparecen quienes muestran su sede.
+- Perfiles ajenos: `/u/[username]` lee `profiles_public` (si hay bloqueo, no existe). Para el resto usa `profile_stats`, `followed_by_mutuals` ("en común") y `can_view_content` (panel de cuenta privada).
+- `copy_workout_as_routine` copia la rutina de un entrenamiento visible. `my_blocked_users` sirve para desbloquear, porque la vista pública oculta a los bloqueados.
+- Fotos de perfil en el bucket público `avatars/<user_id>/...`: cada persona solo escribe en su carpeta.
+- "Busco compañero" lo ve todo el gimnasio, aunque la cuenta sea privada (es una publicación voluntaria).
+
 ## Flujo de trabajo y deploy (acordado con el dueño)
 
 Claude construye en GitHub y el deploy es automático. El dueño **no** tiene que copiar SQL ni tocar Vercel ni Supabase a mano.

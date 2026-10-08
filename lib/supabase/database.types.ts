@@ -1097,13 +1097,64 @@ export type Database = {
       branch_member_count: { Args: { bid: string }; Returns: number };
       can_view_content: { Args: { owner: string }; Returns: boolean };
       can_view_workout: { Args: { wid: string }; Returns: boolean };
+      copy_workout_as_routine: { Args: { p_workout_id: string }; Returns: string };
       f_unaccent: { Args: { "": string }; Returns: string };
+      feed_partner_posts: {
+        Args: { p_before?: string; p_limit?: number; p_scope: string };
+        Returns: {
+          author_avatar: string;
+          author_id: string;
+          author_name: string;
+          author_username: string;
+          body: string;
+          branch_name: string;
+          created_at: string;
+          days: string[];
+          id: string;
+          is_open: boolean;
+          joined: boolean;
+          joined_count: number;
+          time_label: string;
+          topic: string;
+        }[];
+      };
+      feed_workouts: {
+        Args: { p_before?: string; p_limit?: number; p_tab: string };
+        Returns: {
+          author_avatar: string;
+          author_id: string;
+          author_name: string;
+          author_username: string;
+          branch_name: string;
+          comment_count: number;
+          ended_at: string;
+          exercises: Json;
+          id: string;
+          like_count: number;
+          liked: boolean;
+          started_at: string;
+          title: string;
+          top_pr: Json;
+          total_sets: number;
+          total_volume: number;
+        }[];
+      };
       finish_workout: { Args: { p_publish: boolean; p_workout_id: string }; Returns: Json };
+      followed_by_mutuals: { Args: { p_target: string }; Returns: Json };
       gym_of_branch: { Args: { bid: string }; Returns: string };
       gym_today: { Args: Record<PropertyKey, never>; Returns: string };
       is_accepted_follower: { Args: { owner: string; viewer: string }; Returns: boolean };
       is_blocked_between: { Args: { a: string; b: string }; Returns: boolean };
       is_gym_staff: { Args: { gid: string }; Returns: boolean };
+      my_blocked_users: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          blocked_at: string;
+          full_name: string;
+          id: string;
+          username: string;
+        }[];
+      };
       my_gym_id: { Args: Record<PropertyKey, never>; Returns: string };
       owns_routine: { Args: { rid: string }; Returns: boolean };
       owns_workout: { Args: { wid: string }; Returns: boolean };

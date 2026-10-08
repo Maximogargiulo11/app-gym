@@ -67,3 +67,16 @@ export function normalizeSearch(value: string) {
 export function epley(weight: number, reps: number) {
   return weight * (1 + reps / 30);
 }
+
+/** "hace 25 min", "hace 3 h", "hace 2 d" o la fecha si es más viejo. */
+export function timeAgo(iso: string, now = Date.now()) {
+  const diff = Math.max(0, now - new Date(iso).getTime());
+  const min = Math.floor(diff / 60000);
+  if (min < 1) return "recién";
+  if (min < 60) return `hace ${min} min`;
+  const h = Math.floor(min / 60);
+  if (h < 24) return `hace ${h} h`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `hace ${d} d`;
+  return formatDate(iso);
+}
