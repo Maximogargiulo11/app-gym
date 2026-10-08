@@ -18,7 +18,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Principal"
-      className="pb-safe border-border bg-bg/95 fixed inset-x-0 bottom-0 z-40 border-t backdrop-blur"
+      className="pb-safe border-border bg-bg/95 fixed inset-x-0 bottom-0 z-40 border-t backdrop-blur print:hidden"
     >
       <ul className="mx-auto grid max-w-md grid-cols-4">
         {ITEMS.map(({ href, label, icon: Icon }) => {

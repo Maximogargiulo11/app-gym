@@ -11,7 +11,7 @@ Red social de entrenamiento por gimnasio y sede: registro de entrenamientos esti
 | 1 · Base | Tokens de diseño, fuentes, Supabase, migraciones, RLS, seed, auth (email + Google), onboarding y barra inferior | ✅ |
 | 2 · Entrenar | Biblioteca, entrenamiento en curso, descanso, PR, rutinas | ✅ |
 | 3 · Social | Feed, likes, comentarios, perfiles, follows, bloqueo, reportes, "busco compañero" | ✅ |
-| 4 · Sede | Check-in QR, racha, rankings, desafíos y admin de QR | — |
+| 4 · Sede | Check-in QR, racha, rankings, desafíos y admin de QR | ✅ |
 | 5 · PWA y deploy | Service worker, íconos, offline, legales, eliminar cuenta | — |
 
 ## Correr en local
@@ -75,11 +75,18 @@ Para crear una migración nueva: `npx supabase migration new <nombre>`.
 
 ### Pruebas de RLS
 
-`supabase/tests/rls.test.sql` entra como distintos usuarios (sin sesión, pública, privada, bloqueada) y verifica qué puede leer y escribir cada uno: 40 aserciones. Para correrlas, con Supabase local levantado:
+`supabase/tests/` entra como distintos usuarios (sin sesión, pública, privada, bloqueada, staff) y verifica qué puede leer y escribir cada uno: 110 aserciones en `rls`, `training`, `social` y `sede`. Para correrlas, con Supabase local levantado:
 
 ```bash
 npm run test:rls
 ```
+
+## Sede: check-in y QR
+
+- Cada sede tiene un QR que abre `/checkin?b=<slug>&t=<token>`. El token es un HMAC de `slug:qr_version` con un secreto que solo vive en la base; se valida en Postgres (`perform_checkin`).
+- El staff del gimnasio entra a **Perfil → Admin de sedes** (`/admin/sedes`) para ver, imprimir y rotar el QR de cada sede, y para crear desafíos entre sedes.
+- Para ser staff en producción: entrar a `/admin/sedes` e ingresar el código de administrador (de un solo uso; en la base solo se guarda su SHA-256). En local, `demo@banca.app` ya es staff.
+- En local, el QR de Chacabuco abre `http://localhost:3000/checkin?b=manantial-chacabuco&t=224c6e696df17a68f96e5f50038fed88` (secretos fijos del seed).
 
 ## Google OAuth
 

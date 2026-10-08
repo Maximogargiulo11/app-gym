@@ -56,7 +56,7 @@ export function PrivacyFields({ value, onChange }: Props) {
           />
           <Toggle
             label="Aparecer en rankings"
-            description="Tus mejores marcas del mes en el ranking de tu sede."
+            description="Tu mejor marca del mes en el ranking de tu sede. La ve toda la sede, aunque tu cuenta sea privada."
             checked={value.show_in_rankings}
             onChange={(v) => set("show_in_rankings", v)}
           />
